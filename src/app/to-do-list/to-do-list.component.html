@@ -1,0 +1,11 @@
+<to-do-header (onAdded)="add($event)"></to-do-header>
+<button (click)="checkAll()">Check all</button>
+<div>
+    <ul>
+        <li *ngFor="let item of itemsStore | showFilteredBy:currentFilter">
+
+            <to-do-item [item] = item [allChecked] = allChecked (onChange)="onChange($event)"></to-do-item>
+          </li>
+    </ul>
+</div>
+<footer [count] = "itemsLeft" (onChange)="filterApplied($event)"></footer>
