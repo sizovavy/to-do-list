@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Item } from '../item';
-import { TransferItem } from '../transfer-item';
+import { ListItem } from '../item';
     
 @Component({
   selector: 'to-do-item',
@@ -9,31 +8,32 @@ import { TransferItem } from '../transfer-item';
 })
 export class ToDoItemComponent {
      
-  @Input() item:Item;
-  @Input() allChecked:boolean;
-  @Output() onChange = new EventEmitter<TransferItem>();
+  @Input() listItem: ListItem;
+  @Input() allChecked: boolean;
+  @Output() stateChanged = new EventEmitter<ListItem>();
 
   checkBoxInput = new FormControl('');
   
   ngOnChanges(){
-    this.checkBoxInput.setValue(this.item.completed)
+    this.checkBoxInput.setValue(this.listItem.completed);
   }
 
-  onCheckBoxChange(event: Event){
-    const target = event.target as HTMLInputElement
-    this.onChange.emit(
+  onCompletedStateChange(event: Event){
+    const target = event.target as HTMLInputElement;
+    this.stateChanged.emit(
       {
-        id: this.item.id, 
+        id: this.listItem.id, 
+        value: this.listItem.value,
         completed: target.checked
       }
     );
   }
      
-  onDelete(){
-    this.onChange.emit(
+  onDeleteListItem(){
+    this.stateChanged.emit(
       {
-        id: this.item.id, 
-        deleted: true
+        id: this.listItem.id,
+        completed: this.listItem.completed
       }
     );
   }

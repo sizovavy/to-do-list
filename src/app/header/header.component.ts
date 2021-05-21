@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Item } from '../item';
+import { ListItem } from '../item';
 
 @Component({
   selector: 'to-do-header',
@@ -8,24 +8,25 @@ import { Item } from '../item';
 })
 export class HeaderComponent {
 
-    @Output() onAdded = new EventEmitter<Item>();
-    @Output() onCheckedAll = new EventEmitter<Boolean>();
+    @Output() listItemEntered = new EventEmitter<ListItem>();
+    @Output() checkedAllClicked = new EventEmitter<Boolean>();
     
-    newItemInput = new FormControl('');
-    id: number = 0
+    initialListItemsCount = 0;
+    newListItemInput = new FormControl('');
+    id: number = this.initialListItemsCount;
 
-    add(event: Event){
-        this.onAdded.emit(            
+    listItemAdd(event: Event){
+        this.listItemEntered.emit(            
             {   
                 id: this.id++,
                 value: (event.target as HTMLInputElement).value, 
                 completed: false
             }
         );
-        this.newItemInput.setValue('');      
+        this.newListItemInput.setValue('');      
     }
 
     checkAll(){
-        this.onCheckedAll.emit(true)        
+        this.checkedAllClicked.emit();
     }
 }

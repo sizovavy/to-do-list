@@ -1,55 +1,36 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FilterTypes } from "../filter-types";
-import { Item } from "../item";
+import { ListItem } from "../item";
 
 @Component({
     selector: 'to-do-list',
     templateUrl: './to-do-list.component.html',
   })
   export class ToDoListComponent {
-    itemsStore: Item[] = []
-    itemsLeft: number = 0
-    allChecked: boolean = true
-    currentFilter: FilterTypes = FilterTypes.All
-    
-    add(item: Item){
-        this.itemsStore.push(item)
-        this.itemsLeft++    
-    }
+    @Input() listItems: ListItem[];
+    @Input() listItemsLeftCount: number;
+    @Input() currentFilter: FilterTypes = FilterTypes.All;
+
+    @Output() listItemsChange = new EventEmitter<ListItem[]>();
+    @Output() listItemsLeftCountChange = new EventEmitter<number>();   
 
 
-    onChange(event){
-        const itemId = this.itemsStore.indexOf(this.itemsStore.find(it => it.id === event.id));
-
-        if(event.deleted){            
-            if(!this.itemsStore[itemId].completed) {this.itemsLeft--;}
-            this.itemsStore.splice(itemId, 1);
+    onStateChange(event: ListItem){ 
+        const diffCount = 1;   
+                      
+        if(!event.value){
+            this.listItemsChange.emit(this.listItems.filter((item) => item.id !== event.id));
+            this.listItemsLeftCount = event.completed ? this.listItemsLeftCount : this.listItemsLeftCount - diffCount;
+            this.listItemsLeftCountChange.emit(this.listItemsLeftCount);
 
             return;
-        }        
-
-        event.completed ? this.itemsLeft--: this.itemsLeft++;
-        this.itemsStore[itemId].completed = event.completed;
-    }
-
-    filterApplied(filter: FilterTypes){
-
-        if(filter === FilterTypes.All){
-            this.currentFilter = FilterTypes.All
-        }
-       
-        if(filter === FilterTypes.Active){
-            this.currentFilter = FilterTypes.Active 
         }
 
-        if(filter === FilterTypes.Completed){
-            this.currentFilter = FilterTypes.Completed
-        }
-    }
-
-    checkAll(){        
-        this.itemsStore.map(it => it.completed = this.allChecked);
-        this.itemsLeft = this.allChecked ? 0 : this.itemsStore.length;   
-        this.allChecked = !this.allChecked;    
+        const itemIndex = this.listItems.findIndex((item) => item.id === event.id );
+        let newListItems = [...this.listItems];
+        newListItems[itemIndex] = {...newListItems[itemIndex], completed: event.completed};
+        this.listItemsLeftCount = event.completed ? this.listItemsLeftCount - diffCount : this.listItemsLeftCount + diffCount;
+        this.listItemsChange.emit(newListItems);
+        this.listItemsLeftCountChange.emit(this.listItemsLeftCount);
     }
   }

@@ -1,2 +1,3 @@
-<input type="checkbox" [formControl]="checkBoxInput" (change)="onCheckBoxChange($event)">{{item.value}}
-<button (click)="onDelete()">x</button>
+<input type="checkbox" [formControl]="checkBoxInput" (change)="onCompletedStateChange($event)">
+{{listItem?.value}}
+<button (click)="onDeleteListItem()">x</button>
