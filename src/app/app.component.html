@@ -1,3 +1,3 @@
-<to-do-header (listItemEntered)="listItemAdd($event)" (checkedAllClicked)="onCheckedAllList()"></to-do-header>
-<to-do-list [(listItems)]="listItems" [(listItemsLeftCount)]="listItemsLeftCount" [currentFilter]="currentFilter"></to-do-list>
-<to-do-footer [listItemsLeftCount] = "listItemsLeftCount" (filterChanged)="filterApply($event)"></to-do-footer>
+<to-do-header (toDoItemEntered)="createToDoItem($event)" (checkActiveToDoItemsClicked)="checkActiveToDoItems()"></to-do-header>
+<to-do-list [(toDoItems)]="toDoItems" [filterType]="filterType"></to-do-list>
+<to-do-footer [toDoItems] = "toDoItems" (filterTypeChange)="applyFilter($event)"></to-do-footer>

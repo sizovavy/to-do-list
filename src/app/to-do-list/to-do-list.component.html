@@ -1,5 +1,5 @@
 <ul>
-    <li *ngFor="let listItem of listItems | showFilteredBy:currentFilter">
-        <to-do-item [listItem] = listItem (stateChanged)="onStateChange($event)"></to-do-item>
+    <li *ngFor="let toDoItem of toDoItems | showFilteredBy:filterType">
+        <to-do-item [toDoItem] = toDoItem (toDoItemStateChange)="onToDoItemStateChange($event)"></to-do-item>
     </li>
 </ul>

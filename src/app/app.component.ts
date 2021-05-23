@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { FilterTypes } from './filter-types';
-import { ListItem } from './item';
+import { filterTypes } from './filter-types';
+import { ToDoItem, ToDoItems } from './to-do-item';
+
+const title = 'to-do-list';
+const emptyToDoItems: ToDoItems = [];
 
 @Component({
   selector: 'app-root',
@@ -8,37 +11,23 @@ import { ListItem } from './item';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'to-do-list';
-  initialListItemsCount = 0;
-  listItems: ListItem[] = [];
-  listItemsLeftCount: number = this.initialListItemsCount;
-  isListChecked: boolean = false;
-  currentFilter: FilterTypes = FilterTypes.All;
+  readonly title = title;
   
-  listItemAdd(listItem: ListItem){
-      this.listItems = [...this.listItems, listItem];
-      this.listItemsLeftCount++;
+  toDoItems = emptyToDoItems;
+
+  areAllToDoItemsCompleted = false;
+  filterType = filterTypes.all;
+  
+  createToDoItem(toDoItem: ToDoItem): void {
+    this.toDoItems = [...this.toDoItems, toDoItem];
   }
 
-  filterApply(filter: FilterTypes){
-      if(filter === FilterTypes.All){
-          this.currentFilter = FilterTypes.All;
-      }
-     
-      if(filter === FilterTypes.Active){
-          this.currentFilter = FilterTypes.Active;
-      }
-
-      if(filter === FilterTypes.Completed){
-          this.currentFilter = FilterTypes.Completed;
-      }
+  applyFilter(filterType: filterTypes): void {
+    this.filterType = filterType;
   }
 
-  onCheckedAllList(){     
-    this.isListChecked = !this.isListChecked;
-    this.listItemsLeftCount = this.isListChecked ? this.initialListItemsCount : this.listItems.length ;
-    let newArray = [];
-    this.listItems.forEach((item)=>newArray.push({id:item.id, value:item.value, completed: this.isListChecked}));
-    this.listItems = [...newArray];         
+  checkActiveToDoItems(): void {
+    const hasActiveToDoItems = !!this.toDoItems.find(({ isCompleted }) => !isCompleted);
+    this.toDoItems = this.toDoItems.map((toDoItem: ToDoItem) => ({ ...toDoItem, isCompleted: hasActiveToDoItems }));
   }
 }

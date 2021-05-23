@@ -1,32 +1,35 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ListItem } from '../item';
+import { ToDoItem } from '../to-do-item';
+
+const initialToDoItemId = 0;
+const toDoItemIdIncrement = 1;
+const initialCreateToDoItemInputValue = '';
 
 @Component({
   selector: 'to-do-header',
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
-
-    @Output() listItemEntered = new EventEmitter<ListItem>();
-    @Output() checkedAllClicked = new EventEmitter<Boolean>();
+  @Output() toDoItemEntered = new EventEmitter<ToDoItem>();
+  @Output() checkActiveToDoItemsClicked = new EventEmitter<Boolean>();
     
-    initialListItemsCount = 0;
-    newListItemInput = new FormControl('');
-    id: number = this.initialListItemsCount;
+  createToDoItemInput = new FormControl(initialCreateToDoItemInputValue);
+  toDoItemId = initialToDoItemId;
 
-    listItemAdd(event: Event){
-        this.listItemEntered.emit(            
-            {   
-                id: this.id++,
-                value: (event.target as HTMLInputElement).value, 
-                completed: false
-            }
-        );
-        this.newListItemInput.setValue('');      
-    }
+  addToDoItem(event: Event): void {
+    this.toDoItemId = this.toDoItemId + toDoItemIdIncrement;
+    
+    this.toDoItemEntered.emit({
+      id: this.toDoItemId,
+      value: (event.target as HTMLInputElement).value,
+      isCompleted: false
+    });
 
-    checkAll(){
-        this.checkedAllClicked.emit();
-    }
+    this.createToDoItemInput.setValue('');
+  }
+
+  checkActiveToDoItems(): void {
+    this.checkActiveToDoItemsClicked.emit();
+  }
 }

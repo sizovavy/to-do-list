@@ -1,2 +1,2 @@
-<button (click)="checkAll()">Check all</button>
-<input type="text" [formControl]="newListItemInput" (keydown.enter)="listItemAdd($event)">
+<button (click)="checkActiveToDoItems()">Check</button>
+<input type="text" [formControl]="createToDoItemInput" (keydown.enter)="addToDoItem($event.target.value)">

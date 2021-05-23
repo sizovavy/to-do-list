@@ -1,40 +1,36 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ListItem } from '../item';
+import { ToDoItem } from '../to-do-item';
+import { ToDoItemStateTransfer } from '../item-state-transfer';
     
 @Component({
   selector: 'to-do-item',
   templateUrl: './to-do-item.component.html',
 })
-export class ToDoItemComponent {
-     
-  @Input() listItem: ListItem;
-  @Input() allChecked: boolean;
-  @Output() stateChanged = new EventEmitter<ListItem>();
+export class ToDoItemComponent implements OnChanges{
+  @Input() toDoItem: ToDoItem;
 
-  checkBoxInput = new FormControl('');
+  @Output() toDoItemStateChange = new EventEmitter<ToDoItemStateTransfer>();
+
+  toDoItemCompletedFlag = new FormControl('');
   
-  ngOnChanges(){
-    this.checkBoxInput.setValue(this.listItem.completed);
+  ngOnChanges(): void { 
+    this.toDoItemCompletedFlag.setValue(this.toDoItem.isCompleted);
   }
 
-  onCompletedStateChange(event: Event){
-    const target = event.target as HTMLInputElement;
-    this.stateChanged.emit(
-      {
-        id: this.listItem.id, 
-        value: this.listItem.value,
-        completed: target.checked
-      }
-    );
+  onToDoItemStateChange(event: Event): void {
+    this.toDoItemStateChange.emit({
+      id: this.toDoItem.id,
+      isCompleted: (event.target as HTMLInputElement).checked,
+      isDeleted: false
+    });
   }
      
-  onDeleteListItem(){
-    this.stateChanged.emit(
-      {
-        id: this.listItem.id,
-        completed: this.listItem.completed
-      }
-    );
+  onToDoItemDelete(): void {
+    this.toDoItemStateChange.emit({
+      id: this.toDoItem.id,
+      isCompleted: this.toDoItem.isCompleted,
+      isDeleted: true
+    });
   }
 }
