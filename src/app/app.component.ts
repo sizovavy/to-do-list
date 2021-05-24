@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
+import { EMPTY_TO_DO_ITEMS, TITLE } from './constants';
 import { filterTypes } from './filter-types';
 import { ToDoItem, ToDoItems } from './to-do-item';
-
-const title = 'to-do-list';
-const emptyToDoItems: ToDoItems = [];
 
 @Component({
   selector: 'app-root',
@@ -11,9 +9,9 @@ const emptyToDoItems: ToDoItems = [];
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  readonly title = title;
+  readonly title = TITLE;
   
-  toDoItems = emptyToDoItems;
+  toDoItems = EMPTY_TO_DO_ITEMS;
 
   areAllToDoItemsCompleted = false;
   filterType = filterTypes.all;
@@ -26,8 +24,8 @@ export class AppComponent {
     this.filterType = filterType;
   }
 
-  checkActiveToDoItems(): void {
-    const hasActiveToDoItems = !!this.toDoItems.find(({ isCompleted }) => !isCompleted);
+  changeToDoItemsState(): void {
+    const hasActiveToDoItems = this.toDoItems.some(({ isCompleted }: ToDoItem) => !isCompleted);
     this.toDoItems = this.toDoItems.map((toDoItem: ToDoItem) => ({ ...toDoItem, isCompleted: hasActiveToDoItems }));
   }
 }

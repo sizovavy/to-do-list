@@ -1,10 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { INITIAL_FORM_CONTROL_INPUT_VALUE } from '../constants';
 import { ToDoItem } from '../to-do-item';
-
-const initialToDoItemId = 0;
-const toDoItemIdIncrement = 1;
-const initialCreateToDoItemInputValue = '';
 
 @Component({
   selector: 'to-do-header',
@@ -12,24 +9,21 @@ const initialCreateToDoItemInputValue = '';
 })
 export class HeaderComponent {
   @Output() toDoItemEntered = new EventEmitter<ToDoItem>();
-  @Output() checkActiveToDoItemsClicked = new EventEmitter<Boolean>();
+  @Output() changeToDoItemsStateEventEmitter = new EventEmitter<Boolean>();
     
-  createToDoItemInput = new FormControl(initialCreateToDoItemInputValue);
-  toDoItemId = initialToDoItemId;
+  createToDoItemControl = new FormControl(INITIAL_FORM_CONTROL_INPUT_VALUE);  
 
-  addToDoItem(event: Event): void {
-    this.toDoItemId = this.toDoItemId + toDoItemIdIncrement;
-    
+  addToDoItem(value: string): void {
     this.toDoItemEntered.emit({
-      id: this.toDoItemId,
-      value: (event.target as HTMLInputElement).value,
-      isCompleted: false
+      value,
+      id: Date.now(),      
+      isCompleted: false,
     });
 
-    this.createToDoItemInput.setValue('');
+    this.createToDoItemControl.setValue(INITIAL_FORM_CONTROL_INPUT_VALUE);
   }
 
-  checkActiveToDoItems(): void {
-    this.checkActiveToDoItemsClicked.emit();
+  changeToDoItemsState(): void {
+    this.changeToDoItemsStateEventEmitter.emit();
   }
 }

@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToDoItem } from '../to-do-item';
-import { ToDoItemStateTransfer } from '../item-state-transfer';
-    
+import { ToDoItemAction } from '../to-do-item-action';
+import { actionTypes } from '../actions.type';
+import { INITIAL_FORM_CONTROL_INPUT_VALUE } from '../constants';
+
 @Component({
   selector: 'to-do-item',
   templateUrl: './to-do-item.component.html',
@@ -10,27 +12,25 @@ import { ToDoItemStateTransfer } from '../item-state-transfer';
 export class ToDoItemComponent implements OnChanges{
   @Input() toDoItem: ToDoItem;
 
-  @Output() toDoItemStateChange = new EventEmitter<ToDoItemStateTransfer>();
+  @Output() changeToDoItemStateEventEmitter = new EventEmitter<ToDoItemAction>();
 
-  toDoItemCompletedFlag = new FormControl('');
+  changeToDoItemStateControl = new FormControl(INITIAL_FORM_CONTROL_INPUT_VALUE);
   
   ngOnChanges(): void { 
-    this.toDoItemCompletedFlag.setValue(this.toDoItem.isCompleted);
+    this.changeToDoItemStateControl.setValue(this.toDoItem.isCompleted);
   }
 
-  onToDoItemStateChange(event: Event): void {
-    this.toDoItemStateChange.emit({
+  onToDoItemStateChange(): void {
+    this.changeToDoItemStateEventEmitter.emit({
       id: this.toDoItem.id,
-      isCompleted: (event.target as HTMLInputElement).checked,
-      isDeleted: false
+      actionType: actionTypes.selectionToggle,
     });
   }
      
   onToDoItemDelete(): void {
-    this.toDoItemStateChange.emit({
+    this.changeToDoItemStateEventEmitter.emit({
       id: this.toDoItem.id,
-      isCompleted: this.toDoItem.isCompleted,
-      isDeleted: true
+      actionType: actionTypes.delete,
     });
   }
 }

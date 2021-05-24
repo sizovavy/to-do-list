@@ -1,7 +1,8 @@
-import { ToDoItemStateTransfer } from '../item-state-transfer';
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { filterTypes } from "../filter-types";
-import { ToDoItem, ToDoItems } from "../to-do-item";
+import { actionTypes } from './../actions.type';
+import { ToDoItemAction } from '../to-do-item-action';
+import { ToDoItem, ToDoItems } from '../to-do-item';
+import { filterTypes } from '../filter-types';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'to-do-list',
@@ -9,20 +10,27 @@ import { ToDoItem, ToDoItems } from "../to-do-item";
 })
 export class ToDoListComponent {
   @Input() toDoItems: ToDoItems;
-  @Input() filterType = filterTypes.all;
+  @Input() filterType: filterTypes;
 
-  @Output() toDoItemsChange = new EventEmitter<ToDoItems>();
+  @Output() changeToDoItemsStateEventEmitter = new EventEmitter<ToDoItems>();
 
-  onToDoItemStateChange(event: ToDoItemStateTransfer): void {
-    if (event.isDeleted) {
-      this.toDoItemsChange.emit(this.toDoItems.filter((toDoItem: ToDoItem) => toDoItem.id !== event.id));
-      return;
+  onChangeToDoItemState({ id, actionType }: ToDoItemAction): void {
+    const toDoItemActionsHandlers = {
+      [actionTypes.selectionToggle]: this.getToDoItemsWithUpdatedState.bind(this),
+      [actionTypes.delete]: this.getToDoItemsWithoutDeleted.bind(this),
     }
 
-    const toDoItemIndex = this.toDoItems.findIndex((toDoItem: ToDoItem) => toDoItem.id === event.id );
-    let toDoItemsNew = [...this.toDoItems];
-    toDoItemsNew[toDoItemIndex] = {...toDoItemsNew[toDoItemIndex], isCompleted: event.isCompleted};
+    this.changeToDoItemsStateEventEmitter.emit(toDoItemActionsHandlers[actionType](id));
+  }
 
-    this.toDoItemsChange.emit(toDoItemsNew);
+  private getToDoItemsWithoutDeleted(toDoItemId: number): ToDoItems {
+    return this.toDoItems.filter(({ id }: ToDoItem) => id !== toDoItemId);
+  }
+
+  private getToDoItemsWithUpdatedState(toDoItemId: number): ToDoItems {
+    return this.toDoItems.map((toDoItem: ToDoItem) => ({
+        ...toDoItem, 
+        isCompleted: toDoItem.id === toDoItemId ? !toDoItem.isCompleted : toDoItem.isCompleted,
+    }));
   }
 }

@@ -1,3 +1,7 @@
-<to-do-header (toDoItemEntered)="createToDoItem($event)" (checkActiveToDoItemsClicked)="checkActiveToDoItems()"></to-do-header>
-<to-do-list [(toDoItems)]="toDoItems" [filterType]="filterType"></to-do-list>
-<to-do-footer [toDoItems] = "toDoItems" (filterTypeChange)="applyFilter($event)"></to-do-footer>
+<to-do-header (toDoItemEntered)="createToDoItem($event)" (changeToDoItemsStateEventEmitter)="changeToDoItemsState()"></to-do-header>
+<to-do-list [toDoItems]="toDoItems" (changeToDoItemsStateEventEmitter) = "toDoItems = $event" [filterType]="filterType"></to-do-list>
+<to-do-footer 
+  [toDoItems] = "toDoItems" 
+  (changeToDoItemsFilterTypeEventEmitter)="applyFilter($event)"
+  (clearCompletedToDoItemsEventEmitter) = "toDoItems = $event"
+></to-do-footer>
