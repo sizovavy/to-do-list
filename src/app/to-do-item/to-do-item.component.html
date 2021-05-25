@@ -1,3 +1,8 @@
-<input type="checkbox" [formControl]="changeToDoItemStateControl" (change)="onToDoItemStateChange()">
-{{toDoItem?.value}}
+<input 
+    type="checkbox"
+    [value]="toDoItem.isCompleted"
+    [checked]="toDoItem.isCompleted"    
+    (change)="onToDoItemStateChange()"
+>
+{{toDoItem.value}}
 <button (click)="onToDoItemDelete()">x</button>

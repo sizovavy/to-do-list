@@ -1,29 +1,50 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { INITIAL_FORM_CONTROL_INPUT_VALUE } from '../constants';
-import { ToDoItem } from '../to-do-item';
+import { Subscription } from 'rxjs';
+
+import { initialFormControlInputValue } from '../constants';
+import { ToDoItem, ToDoItems } from '../to-do-item';
+import { ToDoListService } from '../to-do-list.service';
 
 @Component({
   selector: 'to-do-header',
   templateUrl: './header.component.html',
 })
-export class HeaderComponent {
-  @Output() toDoItemEntered = new EventEmitter<ToDoItem>();
-  @Output() changeToDoItemsStateEventEmitter = new EventEmitter<Boolean>();
+export class HeaderComponent implements OnDestroy {
+  subscription: Subscription;
+  toDoItems: ToDoItems;  
+
+  constructor(private toDoListService: ToDoListService) {
+    this.subscription = this.toDoListService.onToDoList().subscribe(toDoItems => this.toDoItems = toDoItems);    
+  }
     
-  createToDoItemControl = new FormControl(INITIAL_FORM_CONTROL_INPUT_VALUE);  
+  createToDoItemControl = new FormControl(initialFormControlInputValue);  
 
   addToDoItem(value: string): void {
-    this.toDoItemEntered.emit({
-      value,
-      id: Date.now(),      
-      isCompleted: false,
-    });
+    this.setToDoList([
+      ...this.toDoItems,
+      {
+        value,
+        id: Date.now(),      
+        isCompleted: false,
+      }
+    ]);
 
-    this.createToDoItemControl.setValue(INITIAL_FORM_CONTROL_INPUT_VALUE);
+    this.createToDoItemControl.setValue(initialFormControlInputValue);
   }
 
   changeToDoItemsState(): void {
-    this.changeToDoItemsStateEventEmitter.emit();
+    const hasActiveToDoItems = this.toDoItems.some(({ isCompleted }: ToDoItem) => !isCompleted);
+    this.setToDoList(
+      this.toDoItems.map((toDoItem: ToDoItem) => ({ ...toDoItem, isCompleted: hasActiveToDoItems }))
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  private setToDoList(toDoItems: ToDoItems): void {
+    this.toDoListService.setToDoList(toDoItems);
   }
 }

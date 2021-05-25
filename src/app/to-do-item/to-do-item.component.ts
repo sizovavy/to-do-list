@@ -1,36 +1,37 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { ToDoItem } from '../to-do-item';
-import { ToDoItemAction } from '../to-do-item-action';
-import { actionTypes } from '../actions.type';
-import { INITIAL_FORM_CONTROL_INPUT_VALUE } from '../constants';
+import { actionTypes } from './../actions.type';
+import { Component, Input, OnDestroy } from '@angular/core';
+import { ToDoItem, ToDoItems } from '../to-do-item';
+import { ToDoListService } from '../to-do-list.service';
+import { Subscription } from 'rxjs';
+import { toDoItemActions } from '../to-do-item-actions';
 
 @Component({
   selector: 'to-do-item',
   templateUrl: './to-do-item.component.html',
 })
-export class ToDoItemComponent implements OnChanges{
+export class ToDoItemComponent implements OnDestroy{
   @Input() toDoItem: ToDoItem;
 
-  @Output() changeToDoItemStateEventEmitter = new EventEmitter<ToDoItemAction>();
+  subscription: Subscription;
+  toDoItems: ToDoItems;
 
-  changeToDoItemStateControl = new FormControl(INITIAL_FORM_CONTROL_INPUT_VALUE);
-  
-  ngOnChanges(): void { 
-    this.changeToDoItemStateControl.setValue(this.toDoItem.isCompleted);
+  constructor(private toDoListService: ToDoListService) {
+    this.subscription = this.toDoListService.onToDoList().subscribe((toDoItems: ToDoItems) => this.toDoItems = toDoItems);
   }
 
   onToDoItemStateChange(): void {
-    this.changeToDoItemStateEventEmitter.emit({
-      id: this.toDoItem.id,
-      actionType: actionTypes.selectionToggle,
-    });
+    this.setToDoList(toDoItemActions[actionTypes.selectionToggle](this.toDoItems, this.toDoItem.id));    
   }
      
   onToDoItemDelete(): void {
-    this.changeToDoItemStateEventEmitter.emit({
-      id: this.toDoItem.id,
-      actionType: actionTypes.delete,
-    });
+    this.setToDoList(toDoItemActions[actionTypes.delete](this.toDoItems, this.toDoItem.id));    
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  private setToDoList(toDoItems: ToDoItems): void {
+    this.toDoListService.setToDoList(toDoItems);
   }
 }

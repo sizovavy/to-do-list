@@ -1,77 +1,96 @@
-interface Callback<T1, T2> {
-    (item: T1, index: number, array: Array<T1>): T2;
-  }
+type CallbackMap<I, R = I> = (item: I, index: number, array: Array<I>) => R;
   
-  interface Callback2<T> {
-    (item: T, index: number, array: Array<T>): boolean;
-  }
   
-  interface Callback3<T1, T2> {
-    (accumulator: T1 | T2, item: T1, index: number, array: Array<T1>): T1 | T2;
-  }
+type CallbackSomeFilter<T> = (item: T, index: number, array: Array<T>) => boolean;
+
   
-  function map<T1, T2>(array: Array<T1>, callback: Callback<T1, T2>): Array<T2> {
-    const emptyArray = [];
+type CallbackReduce<T1, T2> = (accumulator: T2, item: T1, index: number, array: Array<T1>) => T2;
+
   
-    let newArray: Array<T2> = emptyArray;
+   const map = <T1, T2>(array: Array<T1>, callback: CallbackMap<T1, T2>, thisArg): Array<T2> => {
+    const newArray: Array<T2> = [];    
   
     for (let i = 0; i < array.length; i++) {
-      // newArray.push(callback(array[i], i, array));
-      newArray = [...newArray, callback(array[i], i, array)];
+      newArray.push(callback.call(thisArg, array[i], i, array));
     }
   
     return newArray;
   }
-  
-  function filter<T>(array: Array<T>, callback: Callback2<T>): Array<T> {
-    const emptyArray = [];
-  
-    let newArray: Array<T> = emptyArray;
+
+  const filter = <T>(array: Array<T>, callback: CallbackSomeFilter<T>, thisArg): Array<T> => {
+    const newArray: Array<T> = [];
   
     for (let i = 0; i < array.length; i++) {
-      if (callback(array[i], i, array)) {
-        newArray = [...newArray, array[i]];
+      if (callback.call(thisArg, array[i], i, array)) {
+        newArray.push(array[i]);
       }
     }
   
     return newArray;
   }
   
-  function some<T>(array: Array<T>, callback: Callback2<T>): boolean {
+  const some = <T>(array: Array<T>, callback: CallbackSomeFilter<T>, thisArg): boolean => {
     for (let i = 0; i < array.length; i++) {
-      if (callback(array[i], i, array)) {
+      if (callback.call(thisArg, array[i], i, array)) {
         return true;
       }
     }
   
     return false;
   }
-  
-  function reduce<T1, T2>(
-    array: Array<T1>,
-    callback: Callback3<T1, T2>,
-    ...initialValue: Array<T2>
-  ): T1 | T2 {
-    if (!array.length && !initialValue.length) {
-      throw new TypeError('Empty array without initial value');
+
+  const every = <T>(array: Array<T>, callback: CallbackSomeFilter<T>, thisArg): boolean => {
+    for (let i = 0; i < array.length; i++) {
+      if (!callback.call(thisArg, array[i], i, array)) {
+        return false;
+      }
     }
   
-    const valueIndex = 0;
+    return true;
+  }
+  
+  function reduce<T1 extends T2, T2>(
+    array: Array<T1>,
+    callback: CallbackReduce<T1, T2>,
+    initialValue?: T2
+  ): T2 {
+    const hasInitialValue = arguments.length === 2;
+    
+    if (!array.length && hasInitialValue) {
+      throw new TypeError('Empty array without initial value');
+    }  
+    
     const indexIncrement = 1;
   
     let index = 0;
-    let value: T1 | T2;
+    let value: T2;
   
-    if (initialValue.length) {
-      value = initialValue[valueIndex];
+    if (hasInitialValue) {
+      value = initialValue;
     } else {
       value = array[index];
       index = index + indexIncrement;
     }
-  
-    for (; index < array.length; index++) {
-      value = callback(value, array[index], index, array);
-    }
+
+    while (index < array.length) {
+        value = callback(value, array[index], index, array);
+        index = index + indexIncrement;
+    }  
   
     return value;
   }
+
+  // type friend  = {
+  //   name: string,
+  //   books: string[],
+  //   age: number
+  // }
+
+  // const friends: friend[] = [
+  //   { name: 'Anna', books: ['Bible', 'Harry Potter'], age: 21 },
+  //   { name: 'Bob', books: ['War and peace', 'Romeo and Juliet'], age: 26 },
+  //   { name: 'Alice', books: ['The Lord of the Rings', 'The Shining'], age: 18 }
+  // ];
+
+  // const initial: number = 0;
+  // let newarr = reduce(friends, (accumulator: number, currentValue: friend) => accumulator + currentValue.age, initial);
