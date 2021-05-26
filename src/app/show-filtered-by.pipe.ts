@@ -1,26 +1,18 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { filterTypes } from './filter-types';
-import { ToDoItem, ToDoItems } from './to-do-item';
+import { filterTypes } from './filter-types.enum';
+import { ToDoItem, ToDoItems } from './to-do-item.type';
 
 @Pipe({
     name: 'showFilteredBy',
 })
 export class ShowFilteredBy implements PipeTransform {
   transform(toDoItems: ToDoItems, filterType: filterTypes): ToDoItems {
-    if (!toDoItems || !filterType) {
-      return toDoItems;
+    const filteredToDoItems = {
+      [filterTypes.all]: toDoItems,
+      [filterTypes.active]: toDoItems.filter(({ isCompleted }: ToDoItem) => !isCompleted),
+      [filterTypes.completed]: toDoItems.filter(({ isCompleted }: ToDoItem) => isCompleted),
     }
 
-    if (filterType === filterTypes.all) {
-      return [...toDoItems];
-    }
-    
-    if (filterType === filterTypes.active) {
-      return toDoItems.filter(({ isCompleted }: ToDoItem) => !isCompleted);
-    }
-
-    if (filterType === filterTypes.completed) {
-      return toDoItems.filter(({ isCompleted }: ToDoItem) => isCompleted);
-    }
+    return filteredToDoItems[filterType]
   }
 }

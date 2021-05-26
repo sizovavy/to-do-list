@@ -1,5 +1,5 @@
-import { actionTypes } from './actions.type';
-import { ToDoItems, ToDoItem } from './to-do-item';
+import { actionTypes } from './action-types.enum';
+import { ToDoItems, ToDoItem } from './to-do-item.type';
 
 const getToDoItemsWithoutDeletedAction = (toDoItems: ToDoItems, toDoItemId: number): ToDoItems => 
   toDoItems.filter(({ id }: ToDoItem) => id !== toDoItemId);

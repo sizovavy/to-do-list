@@ -1,39 +1,30 @@
-import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { filterTypes } from './../filter-types';
-import { ToDoItem, ToDoItems } from '../to-do-item';
-import { Subscription } from 'rxjs';
+import { Component } from '@angular/core';
+
+import { map } from 'rxjs/operators';
+
 import { ToDoListService } from '../to-do-list.service';
+
+import { filterTypes } from '../filter-types.enum';
+import { ToDoItems } from '../to-do-item.type';
 
 @Component({
     selector: 'to-do-footer',
     templateUrl: './footer.component.html',
 })
-export class FooterComponent implements OnDestroy {
-  @Output() changeToDoItemsFilterTypeEventEmitter = new EventEmitter<filterTypes>();
+export class FooterComponent {
+  activeToDoItemsCount$ = this.toDoListService.toDoItems$.pipe(
+    map((toDoItems: ToDoItems) => toDoItems.filter(({ isCompleted }) => !isCompleted).length)
+  );
 
-  activeToDoItemsCount: number;
-  filterTypes = filterTypes;
-  toDoItems: ToDoItems;
-  subscription: Subscription;  
+  filterTypes = filterTypes;  
 
-  constructor(private toDoListService: ToDoListService) {
-    this.subscription = this.toDoListService.onToDoList().subscribe(
-      toDoItems => {
-        this.activeToDoItemsCount = toDoItems.filter(({ isCompleted }) => !isCompleted).length;
-        this.toDoItems = toDoItems;
-      }  
-    );    
-  }
+  constructor(private toDoListService: ToDoListService) {}
 
-  onToDoItemsFilterTypeChange(event: Event): void {
-    this.changeToDoItemsFilterTypeEventEmitter.emit((event.target as HTMLInputElement).value as filterTypes);
+  changeToDoItemsFilterType(event: Event): void {
+    this.toDoListService.changeToDoItemsFilterType(event);
   }
 
   clearCompletedToDoItems(): void {
-    this.toDoListService.setToDoList(this.toDoItems.filter(({ isCompleted }: ToDoItem) => !isCompleted ));
-  }  
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.toDoListService.clearCompletedToDoItems();
   }
 }

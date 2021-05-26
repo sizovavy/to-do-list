@@ -1,4 +1,4 @@
-import { actionTypes } from './actions.type';
+import { actionTypes } from './action-types.enum';
 
 export type ToDoItemAction = {
     id: number;

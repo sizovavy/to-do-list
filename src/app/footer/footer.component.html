@@ -1,11 +1,11 @@
 <div> 
-    {{activeToDoItemsCount}} items left
+    {{activeToDoItemsCount$ | async}} items left
 
-    <input type="radio" id="filterAll" name="filter" [value]="filterTypes.all" (change)="onToDoItemsFilterTypeChange($event)" checked>
+    <input type="radio" id="filterAll" name="filter" [value]="filterTypes.all" (change)="changeToDoItemsFilterType($event)" checked>
     <label for="filterAll">All</label>
-    <input type="radio" id="filterActive" name="filter" [value]="filterTypes.active" (change)="onToDoItemsFilterTypeChange($event)">
+    <input type="radio" id="filterActive" name="filter" [value]="filterTypes.active" (change)="changeToDoItemsFilterType($event)">
     <label for="filterActive">Active</label>
-    <input type="radio" id="filterCompleted" name="filter" [value]="filterTypes.completed" (change)="onToDoItemsFilterTypeChange($event)">
+    <input type="radio" id="filterCompleted" name="filter" [value]="filterTypes.completed" (change)="changeToDoItemsFilterType($event)">
     <label for="filterCompleted">Completed</label>   
     
     <button (click) = "clearCompletedToDoItems()">Clear completed</button>

@@ -4,7 +4,11 @@ type CallbackMap<I, R = I> = (item: I, index: number, array: Array<I>) => R;
 type CallbackSomeFilter<T> = (item: T, index: number, array: Array<T>) => boolean;
 
   
-type CallbackReduce<T1, T2> = (accumulator: T2, item: T1, index: number, array: Array<T1>) => T2;
+type CallbackReduce1<T1, T2> = (accumulator: T2, item: T1, index: number, array: Array<T1>) => T2;
+
+type CallbackReduce2<T> = (accumulator: T, item: T, index: number, array: Array<T>) => T;
+
+type CallbackReduceImpl<T1, T2> = (accumulator: T1 | T2, item: T1, index: number, array: Array<T1>) => T1 | T2;
 
   
    const map = <T1, T2>(array: Array<T1>, callback: CallbackMap<T1, T2>, thisArg): Array<T2> => {
@@ -49,11 +53,23 @@ type CallbackReduce<T1, T2> = (accumulator: T2, item: T1, index: number, array: 
     return true;
   }
   
-  function reduce<T1 extends T2, T2>(
+  function reduce<T1, T2>(
     array: Array<T1>,
-    callback: CallbackReduce<T1, T2>,
-    initialValue?: T2
-  ): T2 {
+    callback: CallbackReduce1<T1, T2>,
+    initialValue: T2
+  ): T2;
+
+  function reduce<T>(
+    array: Array<T>,
+    callback: CallbackReduce2<T>,
+    initialValue: T
+  ): T; 
+
+  function reduce<T1, T2>(
+    array: Array<T1>,
+    callback: CallbackReduceImpl<T1, T2>,
+    initialValue?: T1 | T2
+  ): T1 | T2 {
     const hasInitialValue = arguments.length === 2;
     
     if (!array.length && hasInitialValue) {
@@ -63,7 +79,7 @@ type CallbackReduce<T1, T2> = (accumulator: T2, item: T1, index: number, array: 
     const indexIncrement = 1;
   
     let index = 0;
-    let value: T2;
+    let value: T1 | T2;
   
     if (hasInitialValue) {
       value = initialValue;
@@ -80,17 +96,19 @@ type CallbackReduce<T1, T2> = (accumulator: T2, item: T1, index: number, array: 
     return value;
   }
 
-  // type friend  = {
-  //   name: string,
-  //   books: string[],
-  //   age: number
-  // }
+  type friend  = {
+    name: string,
+    books: string[],
+    age: number
+  }
 
-  // const friends: friend[] = [
-  //   { name: 'Anna', books: ['Bible', 'Harry Potter'], age: 21 },
-  //   { name: 'Bob', books: ['War and peace', 'Romeo and Juliet'], age: 26 },
-  //   { name: 'Alice', books: ['The Lord of the Rings', 'The Shining'], age: 18 }
-  // ];
+  const friends: friend[] = [
+    { name: 'Anna', books: ['Bible', 'Harry Potter'], age: 21 },
+    { name: 'Bob', books: ['War and peace', 'Romeo and Juliet'], age: 26 },
+    { name: 'Alice', books: ['The Lord of the Rings', 'The Shining'], age: 18 }
+  ];
 
-  // const initial: number = 0;
-  // let newarr = reduce(friends, (accumulator: number, currentValue: friend) => accumulator + currentValue.age, initial);
+  const initial: string = "0";
+  let newarr = reduce(friends, (accumulator: number, currentValue: friend) => accumulator + currentValue.age, 0);
+
+  friends.reduce((accumulator: friend, currentValue: friend) => currentValue)

@@ -1,37 +1,22 @@
-import { actionTypes } from './../actions.type';
-import { Component, Input, OnDestroy } from '@angular/core';
-import { ToDoItem, ToDoItems } from '../to-do-item';
+import { Component, Input } from '@angular/core';
+
 import { ToDoListService } from '../to-do-list.service';
-import { Subscription } from 'rxjs';
-import { toDoItemActions } from '../to-do-item-actions';
+
+import { actionTypes } from '../action-types.enum';
+import { ToDoItem } from '../to-do-item.type';
 
 @Component({
   selector: 'to-do-item',
   templateUrl: './to-do-item.component.html',
 })
-export class ToDoItemComponent implements OnDestroy{
+export class ToDoItemComponent {
   @Input() toDoItem: ToDoItem;
 
-  subscription: Subscription;
-  toDoItems: ToDoItems;
+  actionTypes = actionTypes;
 
-  constructor(private toDoListService: ToDoListService) {
-    this.subscription = this.toDoListService.onToDoList().subscribe((toDoItems: ToDoItems) => this.toDoItems = toDoItems);
-  }
+  constructor(private toDoListService: ToDoListService) {}
 
-  onToDoItemStateChange(): void {
-    this.setToDoList(toDoItemActions[actionTypes.selectionToggle](this.toDoItems, this.toDoItem.id));    
-  }
-     
-  onToDoItemDelete(): void {
-    this.setToDoList(toDoItemActions[actionTypes.delete](this.toDoItems, this.toDoItem.id));    
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
-
-  private setToDoList(toDoItems: ToDoItems): void {
-    this.toDoListService.setToDoList(toDoItems);
+  onToDoItemStateChange(actionType): void {
+    this.toDoListService.changeToDoItemByAction(actionType, this.toDoItem.id);  
   }
 }
