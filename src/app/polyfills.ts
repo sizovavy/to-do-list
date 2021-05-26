@@ -52,24 +52,25 @@ type CallbackReduceImpl<T1, T2> = (accumulator: T1 | T2, item: T1, index: number
   
     return true;
   }
-  
-  function reduce<T1, T2>(
-    array: Array<T1>,
-    callback: CallbackReduce1<T1, T2>,
-    initialValue: T2
-  ): T2;
 
-  function reduce<T>(
-    array: Array<T>,
-    callback: CallbackReduce2<T>,
-    initialValue: T
-  ): T; 
+  interface Reduce {
+    <T1, T2>(
+      array: Array<T1>,
+      callback: CallbackReduce1<T1, T2>,
+      initialValue: T2
+    ): T2;
+    <T>(
+      array: Array<T>,
+      callback: CallbackReduce2<T>,
+      initialValue: T
+    ): T;
+  }
 
-  function reduce<T1, T2>(
+  const reduce: Reduce = function<T1, T2>(
     array: Array<T1>,
     callback: CallbackReduceImpl<T1, T2>,
     initialValue?: T1 | T2
-  ): T1 | T2 {
+  ): T1 | T2{
     const hasInitialValue = arguments.length === 2;
     
     if (!array.length && hasInitialValue) {

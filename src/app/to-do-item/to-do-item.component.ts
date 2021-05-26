@@ -12,11 +12,11 @@ import { ToDoItem } from '../to-do-item.type';
 export class ToDoItemComponent {
   @Input() toDoItem: ToDoItem;
 
-  actionTypes = actionTypes;
+  readonly actionTypes = actionTypes;
 
   constructor(private toDoListService: ToDoListService) {}
 
-  onToDoItemStateChange(actionType): void {
+  onToDoItemStateChange(actionType: actionTypes): void {
     this.toDoListService.changeToDoItemByAction(actionType, this.toDoItem.id);  
   }
 }

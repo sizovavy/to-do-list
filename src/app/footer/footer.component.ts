@@ -16,7 +16,7 @@ export class FooterComponent {
     map((toDoItems: ToDoItems) => toDoItems.filter(({ isCompleted }) => !isCompleted).length)
   );
 
-  filterTypes = filterTypes;  
+  readonly filterTypes = filterTypes;  
 
   constructor(private toDoListService: ToDoListService) {}
 
