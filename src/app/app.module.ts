@@ -7,7 +7,6 @@ import { ToDoItemComponent } from './to-do-item/to-do-item.component';
 import { HeaderComponent } from './header/header.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FooterComponent } from './footer/footer.component';
-import { ShowFilteredBy } from './show-filtered-by.pipe';
 
 @NgModule({
   declarations: [

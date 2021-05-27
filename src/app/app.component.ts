@@ -26,7 +26,7 @@ export class AppComponent {
     }
   }
 
-  store = new Store(this.counterReducer);
+  store = new Store(this.counterReducer, { value: 0 });
   currentState = this.store.getState().value;
 
   subscription1 = this.store.subscribe((state) => console.log(state.value));

@@ -24,9 +24,9 @@ export class ToDoListService {
               [filterTypes.all]: toDoItems,
               [filterTypes.active]: toDoItems.filter(({ isCompleted }: ToDoItem) => !isCompleted),
               [filterTypes.completed]: toDoItems.filter(({ isCompleted }: ToDoItem) => isCompleted),
-            }
+            };
         
-            return filteredToDoItems[filterType]
+            return filteredToDoItems[filterType];
           })
     )
 
@@ -36,7 +36,7 @@ export class ToDoListService {
     
 
     changeToDoItemsFilterType(event: Event): void {
-        this.toDoItemFilterType$.next((event.target as HTMLInputElement).value as filterTypes)
+        this.toDoItemFilterType$.next((event.target as HTMLInputElement).value as filterTypes);
     }
     
     changeToDoItemByAction(actionType: actionTypes, toDoItemId: number): void {
