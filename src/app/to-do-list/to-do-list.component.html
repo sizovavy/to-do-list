@@ -1,5 +1,5 @@
 <ul>
-    <li *ngFor="let toDoItem of toDoItems$ | async | showFilteredBy:(toDoItemsFilterType$ | async)">
+    <li *ngFor="let toDoItem of filteredToDoItems$ | async">
         <to-do-item [toDoItem] = toDoItem></to-do-item>
     </li>
 </ul>

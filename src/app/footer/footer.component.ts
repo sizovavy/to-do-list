@@ -12,9 +12,7 @@ import { ToDoItems } from '../to-do-item.type';
     templateUrl: './footer.component.html',
 })
 export class FooterComponent {
-  activeToDoItemsCount$ = this.toDoListService.toDoItems$.pipe(
-    map((toDoItems: ToDoItems) => toDoItems.filter(({ isCompleted }) => !isCompleted).length)
-  );
+  activeToDoItemsCount$ = this.toDoListService.activeToDoItemsCount$;
 
   readonly filterTypes = filterTypes;  
 

@@ -15,7 +15,6 @@ import { ShowFilteredBy } from './show-filtered-by.pipe';
     HeaderComponent,
     ToDoItemComponent,
     FooterComponent,
-    ShowFilteredBy,
     ToDoListComponent,
   ],
   imports: [

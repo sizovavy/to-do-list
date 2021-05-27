@@ -9,6 +9,7 @@ import { ToDoListService } from '../to-do-list.service';
 export class ToDoListComponent {
   toDoItems$ = this.toDoListService.toDoItems$;
   toDoItemsFilterType$ = this.toDoListService.toDoItemFilterType$;
+  filteredToDoItems$ = this.toDoListService.filteredToDoItems$;
 
   constructor(private toDoListService: ToDoListService) {}
 }
