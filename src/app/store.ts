@@ -1,51 +1,37 @@
-// class Store {
-//     dispatch(){}
-//     subscribe(){} 
-//     getState(){}
-//     unsubscribe(){}
-// }
-
-// const store = new Store(reducer);
-// store.subscribe()() //subscribe-unsubscribe
-
-type action = {
+type Action = {
     type: string,
     payload?: any
 }
 
-type callback = (any) => any;
-type unsubscribe = (id: number) => void;
+type Callback = (any) => any;
 
-type subscriber = {
-    id: number,
-    callback: callback;
+type Subscriber = {
+    callback: Callback;
 }
 
 export class Store<S> {
-    private subscribers: Array<subscriber> = [];
+    private subscribers: Array<Subscriber> = [];
 
-    constructor(private reducer: (state: S, action: action) => S, private state: S) {}
+    constructor(private reducer: (state: S, action: Action) => S, private state: S) {}
 
-    dispatch(action: action): void {
-        // state can be unchangable
+    dispatch(action: Action): void {
         const currentState = this.getState();
         this.state = this.reducer(currentState, action);
-        this.subscribers.forEach((subscriber: subscriber) => subscriber.callback(this.state));
+        if(currentState !== this.state) {
+            this.subscribers.forEach((subscriber: Subscriber) => subscriber.callback(this.state));
+        }        
     }
 
     getState(): S {
         return this.state;
     }
 
-    subscribe(callback: callback): unsubscribe {
-        // implement without id
-        const id = Math.floor(Math.random() * (10**10));
-        this.subscribers = [...this.subscribers, { id, callback }];
-// avoid bind
-        return this.unsubscribe.bind(this, id);
+    subscribe(callback: (state: S) => any): () => void {
+        this.subscribers = [...this.subscribers, { callback }];
+        return () => this.unsubscribe(callback);
     }
 
-    unsubscribe(id: number): void {
-        this.subscribers = this.subscribers.filter(({ id }: subscriber) => id !== id);
+    unsubscribe(unsubscribeCallback: (state: S) => any): void {    
+        this.subscribers = this.subscribers.filter(({ callback }: Subscriber) => callback !== unsubscribeCallback);
     }    
 }

@@ -4,6 +4,7 @@ import { ToDoListService } from '../to-do-list.service';
 
 import { actionTypes } from '../action-types.enum';
 import { ToDoItem } from '../to-do-item.type';
+import { businessActionTypes } from '../business-action.enum';
 
 @Component({
   selector: 'to-do-item',
@@ -17,6 +18,6 @@ export class ToDoItemComponent {
   constructor(private toDoListService: ToDoListService) {}
 
   onToDoItemStateChange(actionType: actionTypes): void {
-    this.toDoListService.changeToDoItemByAction(actionType, this.toDoItem.id);  
+    this.toDoListService.emitNewToDoItems(businessActionTypes.changeToDoItem, actionType, this.toDoItem.id);
   }
 }

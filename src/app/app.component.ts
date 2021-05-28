@@ -12,10 +12,6 @@ export class AppComponent {
   readonly title = title;
 
   counterReducer(state = { value: 0 }, action) {
-    if(!action) {
-      return state;
-    }
-
     switch (action.type) {
       case 'counter/incremented':
         return { ...state, value: state.value + 1 }

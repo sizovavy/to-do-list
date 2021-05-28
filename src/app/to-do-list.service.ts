@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import { toDoItemActions } from './to-do-item-actions';
+import { businessActions } from './business-actions';
+import { filteredToDoItems } from './filtered-to-do-items';
 
 import { emptyToDoItems, initialFilterType } from './constants';
 
 import { filterTypes } from './filter-types.enum';
-import { actionTypes } from './action-types.enum';
+import { businessActionTypes } from './business-action.enum';
 
-import { ToDoItem, ToDoItems } from './to-do-item.type';
-import { map } from 'rxjs/operators';
-
+import { ToDoItems } from './to-do-item.type';
 
 @Injectable({ providedIn: 'root' })
 export class ToDoListService {
@@ -19,62 +19,23 @@ export class ToDoListService {
     readonly toDoItemFilterType$ = new BehaviorSubject<filterTypes>(initialFilterType);
 
     readonly filteredToDoItems$ = combineLatest([this.toDoItems$, this.toDoItemFilterType$]).pipe(
-        map(([toDoItems, filterType]: [ToDoItems, filterTypes]) => {
-            const filteredToDoItems = {
-              [filterTypes.all]: toDoItems,
-              [filterTypes.active]: toDoItems.filter(({ isCompleted }: ToDoItem) => !isCompleted),
-              [filterTypes.completed]: toDoItems.filter(({ isCompleted }: ToDoItem) => isCompleted),
-            };
-        
-            return filteredToDoItems[filterType];
-          })
+        map(([toDoItems, filterType]: [ToDoItems, filterTypes]) => filteredToDoItems[filterType](toDoItems))
     )
 
     readonly activeToDoItemsCount$ = this.toDoItems$.pipe(
-        map((toDoItems: ToDoItems) => toDoItems.filter(({ isCompleted }) => !isCompleted).length)
-      );
-    
+        map((toDoItems: ToDoItems) => this.getActiveToDoItemsCount(toDoItems))
+    )    
 
     changeToDoItemsFilterType(event: Event): void {
         this.toDoItemFilterType$.next((event.target as HTMLInputElement).value as filterTypes);
     }
-    
-    changeToDoItemByAction(actionType: actionTypes, toDoItemId: number): void {
-        this.emitToDoItems(toDoItemActions[actionType](this.toDoItems, toDoItemId));    
+
+    emitNewToDoItems(businessAction: businessActionTypes, ...args): void {
+        const toDoItems = this.toDoItems$.getValue();
+        this.toDoItems$.next(businessActions[businessAction].apply(null, [toDoItems, ...args]));
     }
 
-    createToDoItem(toDoItem: ToDoItem): void {
-        this.emitToDoItems([...this.toDoItems, toDoItem]);
-    }
-
-    switchActiveToDoItemsToCompleted(): void {
-        const hasActiveToDoItems = this.toDoItems.some(({ isCompleted }: ToDoItem) => !isCompleted);
-
-        this.emitToDoItems(this.toDoItems.map((toDoItem: ToDoItem) => ({ 
-            ...toDoItem, 
-            isCompleted: hasActiveToDoItems,
-        })));
-    }
-
-    clearCompletedToDoItems(): void {
-        this.emitToDoItems(this.toDoItems.filter(({ isCompleted }: ToDoItem) => !isCompleted ));
-    }
-    
-    private get toDoItems(): ToDoItems{
-        return this.toDoItems$.getValue();
-    }
-
-    private emitToDoItems(toDoItems: ToDoItems): void {
-        this.toDoItems$.next(toDoItems); 
+    private getActiveToDoItemsCount(toDoItems: ToDoItems): number {
+        return toDoItems.filter(({ isCompleted }) => !isCompleted).length
     }
 }
-
-// class Store {
-//     dispatch(){}
-//     subscribe(){} 
-//     getState(){}
-//     unsubscribe(){}
-// }
-
-// const store = new Store(reducer);
-// store.subscribe()() //subscribe-unsubscribe

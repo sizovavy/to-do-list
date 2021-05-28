@@ -6,6 +6,7 @@ import { ToDoListService } from '../to-do-list.service';
 
 import { filterTypes } from '../filter-types.enum';
 import { ToDoItems } from '../to-do-item.type';
+import { businessActionTypes } from '../business-action.enum';
 
 @Component({
     selector: 'to-do-footer',
@@ -23,6 +24,6 @@ export class FooterComponent {
   }
 
   clearCompletedToDoItems(): void {
-    this.toDoListService.clearCompletedToDoItems();
+    this.toDoListService.emitNewToDoItems(businessActionTypes.clearCompletedToDoItems);
   }
 }
