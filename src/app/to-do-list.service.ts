@@ -23,7 +23,7 @@ export class ToDoListService {
     )
 
     readonly activeToDoItemsCount$ = this.toDoItems$.pipe(
-        map((toDoItems: ToDoItems) => this.getActiveToDoItemsCount(toDoItems))
+        map(this.getActiveToDoItemsCount)
     )    
 
     changeToDoItemsFilterType(event: Event): void {
@@ -32,7 +32,7 @@ export class ToDoListService {
 
     emitNewToDoItems(businessAction: businessActionTypes, ...args): void {
         const toDoItems = this.toDoItems$.getValue();
-        this.toDoItems$.next(businessActions[businessAction].apply(null, [toDoItems, ...args]));
+        this.toDoItems$.next(businessActions[businessAction](toDoItems, ...args));
     }
 
     private getActiveToDoItemsCount(toDoItems: ToDoItems): number {

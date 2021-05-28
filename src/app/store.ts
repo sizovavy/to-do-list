@@ -3,22 +3,21 @@ type Action = {
     payload?: any
 }
 
-type Callback = (any) => any;
 
-type Subscriber = {
-    callback: Callback;
-}
+
+type Subscriber<S> = (state: S) => void;
 
 export class Store<S> {
-    private subscribers: Array<Subscriber> = [];
+    private subscribers: Array<Subscriber<S>> = [];
 
     constructor(private reducer: (state: S, action: Action) => S, private state: S) {}
 
     dispatch(action: Action): void {
-        const currentState = this.getState();
-        this.state = this.reducer(currentState, action);
-        if(currentState !== this.state) {
-            this.subscribers.forEach((subscriber: Subscriber) => subscriber.callback(this.state));
+        const state = this.reducer(this.state, action);
+
+        if (state !== this.state) {
+            this.state = state;
+            this.subscribers.forEach((subscriber: Subscriber<S>) => subscriber(state));
         }        
     }
 
@@ -26,12 +25,12 @@ export class Store<S> {
         return this.state;
     }
 
-    subscribe(callback: (state: S) => any): () => void {
-        this.subscribers = [...this.subscribers, { callback }];
-        return () => this.unsubscribe(callback);
+    subscribe(subscriber: Subscriber<S>): () => void {
+        this.subscribers = [...this.subscribers, subscriber ];
+        return () => this.unsubscribe(subscriber);
     }
 
-    unsubscribe(unsubscribeCallback: (state: S) => any): void {    
-        this.subscribers = this.subscribers.filter(({ callback }: Subscriber) => callback !== unsubscribeCallback);
+    unsubscribe(unsubscriber: Subscriber<S>): void {
+        this.subscribers = this.subscribers.filter((subscriber: Subscriber<S>) => subscriber !== unsubscriber);
     }    
 }
