@@ -2,9 +2,9 @@ import { Component, Input } from '@angular/core';
 
 import { ToDoListService } from '../to-do-list.service';
 
-import { actionTypes } from '../action-types.enum';
+import { toDoItemActionTypes } from './../to-do-item-action.enum';
+
 import { ToDoItem } from '../to-do-item.type';
-import { businessActionTypes } from '../business-action.enum';
 
 @Component({
   selector: 'to-do-item',
@@ -13,11 +13,11 @@ import { businessActionTypes } from '../business-action.enum';
 export class ToDoItemComponent {
   @Input() toDoItem: ToDoItem;
 
-  readonly actionTypes = actionTypes;
+  readonly toDoItemActionTypes = toDoItemActionTypes;
 
   constructor(private toDoListService: ToDoListService) {}
 
-  onToDoItemStateChange(actionType: actionTypes): void {
-    this.toDoListService.emitNewToDoItems(businessActionTypes.changeToDoItem, actionType, this.toDoItem.id);
+  onToDoItemStateChange(toDoItemActionType: toDoItemActionTypes): void {
+    this.toDoListService.changeToDoItem(toDoItemActionType, this.toDoItem);
   }
 }

@@ -1,4 +1,5 @@
-export enum actionTypes {
+export enum toDoItemActionTypes {
   selectionToggle = 'selectionToggle',
   delete = 'delete',
+  create = 'create'
 }

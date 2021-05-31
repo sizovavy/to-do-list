@@ -1,17 +1,21 @@
 import { Injectable } from '@angular/core';
 
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { businessActions } from './business-actions';
+import { toDoItemActions } from './to-do-item-actions';
+import { toDoItemsActions } from './to-do-items-actions';
+
 import { filteredToDoItems } from './filtered-to-do-items';
 
 import { emptyToDoItems, initialFilterType } from './constants';
 
-import { filterTypes } from './filter-types.enum';
-import { businessActionTypes } from './business-action.enum';
+import { ToDoItem, ToDoItems } from './to-do-item.type';
 
-import { ToDoItems } from './to-do-item.type';
+import { filterTypes } from './filter-types.enum';
+import { toDoItemActionTypes } from './to-do-item-action.enum';
+import { toDoItemsActionTypes } from './to-do-items-action.enum';
+
 
 @Injectable({ providedIn: 'root' })
 export class ToDoListService {
@@ -26,13 +30,18 @@ export class ToDoListService {
         map(this.getActiveToDoItemsCount)
     )    
 
-    changeToDoItemsFilterType(event: Event): void {
-        this.toDoItemFilterType$.next((event.target as HTMLInputElement).value as filterTypes);
+    changeToDoItemsFilterType(filterType: filterTypes): void {
+        this.toDoItemFilterType$.next(filterType);
     }
 
-    emitNewToDoItems(businessAction: businessActionTypes, ...args): void {
+    changeToDoItem(toDoItemActionType: toDoItemActionTypes, toDoItem: ToDoItem): void {
         const toDoItems = this.toDoItems$.getValue();
-        this.toDoItems$.next(businessActions[businessAction](toDoItems, ...args));
+        this.toDoItems$.next(toDoItemActions[toDoItemActionType](toDoItems, toDoItem));
+    }
+
+    changeToDoItems(toDoItemsActionType: toDoItemsActionTypes): void {
+        const toDoItems = this.toDoItems$.getValue();
+        this.toDoItems$.next(toDoItemsActions[toDoItemsActionType](toDoItems));
     }
 
     private getActiveToDoItemsCount(toDoItems: ToDoItems): number {

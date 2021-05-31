@@ -1,15 +1,22 @@
 const zip = (...arrays: Array<Array<any>>): Array<any> => {
     let resArray = [];
+    let maxLen = Math.max(...arrays.map((arr) => arr.length))
 
-    for(let i = 0; i < arrays[0].length; i++){
-      arrays.forEach(array => resArray.push(array[i]))
+    for (let i = 0; i < maxLen; i++){
+      resArray.push([]);
+      
+      for(let j = 0; j < arrays.length; j++){
+        resArray[i][j] = arrays[j][i]
+      }
     }
-
-    return resArray
+  
+    return resArray;
 }
 
 let gfg = zip(
-    ['Amit', 'Akash', 'Avijit'], 
+    ['Amit', 'Akash'], 
     [1, 2, 3], 
     ['pass', 'pass', 'fail']
-);        
+);
+
+

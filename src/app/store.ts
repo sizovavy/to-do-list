@@ -2,7 +2,13 @@ type Action = {
     type: string,
     payload?: any
 }
+interface one {
+    name: string
+}
 
+interface one {
+    id: number
+}
 
 
 type Subscriber<S> = (state: S) => void;

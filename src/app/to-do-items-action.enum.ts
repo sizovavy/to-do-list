@@ -1,6 +1,4 @@
-export enum businessActionTypes {
-    changeToDoItem = 'changeToDoItem',
-    createToDoItem = 'createToDoItem',
+export enum toDoItemsActionTypes {
     switchActiveToDoItemsToCompleted = 'switchActiveToDoItemsToCompleted',
     clearCompletedToDoItems = 'clearCompletedToDoItems'
 }

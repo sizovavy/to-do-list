@@ -4,7 +4,9 @@ import { FormControl } from '@angular/forms';
 import { ToDoListService } from '../to-do-list.service';
 
 import { initialFormControlInputValue } from '../constants';
-import { businessActionTypes } from '../business-action.enum';
+
+import { toDoItemsActionTypes } from '../to-do-items-action.enum';
+import { toDoItemActionTypes } from '../to-do-item-action.enum';
 
 
 @Component({
@@ -14,20 +16,19 @@ import { businessActionTypes } from '../business-action.enum';
 export class HeaderComponent {
   constructor(private toDoListService: ToDoListService) {}
     
-  createToDoItemControl = new FormControl(initialFormControlInputValue);  
+  createToDoItemControl = new FormControl(initialFormControlInputValue);
 
-  addToDoItem(value: string): void {
-
-    this.toDoListService.emitNewToDoItems(businessActionTypes.createToDoItem, {
-        value,
-        id: Date.now(),      
-        isCompleted: false,
-    });
+  createToDoItem(value: string): void {   
+    this.toDoListService.changeToDoItem(toDoItemActionTypes.create, {
+      value,
+      id: Date.now(),      
+      isCompleted: false,
+  });
 
     this.createToDoItemControl.setValue(initialFormControlInputValue);
   }
 
   switchActiveToDoItemsToCompleted(): void {
-    this.toDoListService.emitNewToDoItems(businessActionTypes.switchActiveToDoItemsToCompleted);
+    this.toDoListService.changeToDoItems(toDoItemsActionTypes.switchActiveToDoItemsToCompleted);
   }
 }
