@@ -1,6 +1,10 @@
 import { Component, Input } from '@angular/core';
 
-import { ToDoListService } from '../to-do-list.service';
+import { Store } from '@ngrx/store';
+
+import { AppState } from '../store/state/app.state';
+
+import { ChangeToDoItemCompletedStatus, DeleteToDoItem } from '../store/actions/to-do-items.action';
 
 import { toDoItemActionTypes } from './../to-do-item-action.enum';
 
@@ -15,9 +19,13 @@ export class ToDoItemComponent {
 
   readonly toDoItemActionTypes = toDoItemActionTypes;
 
-  constructor(private toDoListService: ToDoListService) {}
+  constructor(private readonly store: Store<AppState>) {}
 
-  onToDoItemStateChange(toDoItemActionType: toDoItemActionTypes): void {
-    this.toDoListService.changeToDoItem(toDoItemActionType, this.toDoItem);
+  deleteToDoItem(): void {
+    this.store.dispatch(DeleteToDoItem(this.toDoItem))
+  }
+
+  changeToDoItemCompletedStatus(): void {
+    this.store.dispatch(ChangeToDoItemCompletedStatus(this.toDoItem))
   }
 }

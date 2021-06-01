@@ -1,9 +1,15 @@
 import { Component } from '@angular/core';
 
+import { Store } from '@ngrx/store';
+
 import { ToDoListService } from '../to-do-list.service';
 
+import { AppState } from '../store/state/app.state';
+
+import { ChangeFilterType } from '../store/actions/filter-type.action';
+import { ClearCompletedToDoItems } from '../store/actions/to-do-items.action';
+
 import { filterTypes } from '../filter-types.enum';
-import { toDoItemsActionTypes } from '../to-do-items-action.enum';
 
 @Component({
     selector: 'to-do-footer',
@@ -14,13 +20,15 @@ export class FooterComponent {
 
   readonly filterTypes = filterTypes;
 
-  constructor(private toDoListService: ToDoListService) {}
+  constructor(private readonly store: Store<AppState>, private toDoListService: ToDoListService) {}
 
   changeToDoItemsFilterType(event: Event): void {
-    this.toDoListService.changeToDoItemsFilterType((event.target as HTMLInputElement).value as filterTypes);
+    this.store.dispatch(ChangeFilterType({
+      filterType: (event.target as HTMLInputElement).value as filterTypes
+    }));   
   }
 
-  clearCompletedToDoItems(): void {    
-    this.toDoListService.changeToDoItems(toDoItemsActionTypes.clearCompletedToDoItems);
+  clearCompletedToDoItems(): void { 
+    this.store.dispatch(ClearCompletedToDoItems());
   }
 }

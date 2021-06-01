@@ -1,34 +1,34 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { ToDoListService } from '../to-do-list.service';
+import { Store } from '@ngrx/store';
 
 import { initialFormControlInputValue } from '../constants';
 
-import { toDoItemsActionTypes } from '../to-do-items-action.enum';
-import { toDoItemActionTypes } from '../to-do-item-action.enum';
+import { AppState } from '../store/state/app.state';
 
+import { CreateToDoItem, SwitchActiveToDoItemsToCompleted } from '../store/actions/to-do-items.action';
 
 @Component({
   selector: 'to-do-header',
   templateUrl: './header.component.html',
 })
 export class HeaderComponent {
-  constructor(private toDoListService: ToDoListService) {}
+  constructor(private readonly store: Store<AppState>) {}
     
   createToDoItemControl = new FormControl(initialFormControlInputValue);
 
-  createToDoItem(value: string): void {   
-    this.toDoListService.changeToDoItem(toDoItemActionTypes.create, {
-      value,
-      id: Date.now(),      
-      isCompleted: false,
-  });
+  createToDoItem(value: string): void {
+    this.store.dispatch(CreateToDoItem({
+          value,
+          id: Date.now(),      
+          isCompleted: false,
+    }))
 
     this.createToDoItemControl.setValue(initialFormControlInputValue);
   }
 
   switchActiveToDoItemsToCompleted(): void {
-    this.toDoListService.changeToDoItems(toDoItemsActionTypes.switchActiveToDoItemsToCompleted);
+    this.store.dispatch(SwitchActiveToDoItemsToCompleted());
   }
 }

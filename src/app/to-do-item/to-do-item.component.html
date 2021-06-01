@@ -2,7 +2,7 @@
     type="checkbox"
     [value]="toDoItem.isCompleted"
     [checked]="toDoItem.isCompleted"    
-    (change)="onToDoItemStateChange(toDoItemActionTypes.selectionToggle)"
+    (change)="changeToDoItemCompletedStatus()"
 >
 {{toDoItem.value}}
-<button (click)="onToDoItemStateChange(toDoItemActionTypes.delete)">x</button>
+<button (click)="deleteToDoItem()">x</button>
