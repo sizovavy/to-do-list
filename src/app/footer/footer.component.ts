@@ -6,8 +6,8 @@ import { ToDoListService } from '../to-do-list.service';
 
 import { AppState } from '../store/state/app.state';
 
-import { ChangeFilterType } from '../store/actions/filter-type.action';
-import { ClearCompletedToDoItems } from '../store/actions/to-do-items.action';
+import { changeFilterType } from '../store/actions/filter-type.action';
+import { clearCompletedToDoItems } from '../store/actions/to-do-items.action';
 
 import { filterTypes } from '../filter-types.enum';
 
@@ -23,12 +23,12 @@ export class FooterComponent {
   constructor(private readonly store: Store<AppState>, private toDoListService: ToDoListService) {}
 
   changeToDoItemsFilterType(event: Event): void {
-    this.store.dispatch(ChangeFilterType({
+    this.store.dispatch(changeFilterType({
       filterType: (event.target as HTMLInputElement).value as filterTypes
     }));   
   }
 
   clearCompletedToDoItems(): void { 
-    this.store.dispatch(ClearCompletedToDoItems());
+    this.store.dispatch(clearCompletedToDoItems());
   }
 }

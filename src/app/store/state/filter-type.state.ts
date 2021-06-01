@@ -7,4 +7,4 @@ export interface FilterTypeState {
 
 export const initialFilterTypeState: FilterTypeState = {
     filterType: initialFilterType,
-}
+};

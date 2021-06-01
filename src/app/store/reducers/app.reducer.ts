@@ -4,6 +4,6 @@ import { toDoItemsReducer } from './to-do-items.reducer';
 import { filterTypeReducer } from './filter-type.reducer';
 
 export const appReducers: ActionReducerMap<AppState> = {
-    toDoItems: toDoItemsReducer,
-    filterType: filterTypeReducer,
+    toDoItemsState: toDoItemsReducer,
+    filterTypeState: filterTypeReducer,
 }

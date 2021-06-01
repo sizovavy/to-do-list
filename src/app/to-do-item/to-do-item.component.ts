@@ -4,9 +4,7 @@ import { Store } from '@ngrx/store';
 
 import { AppState } from '../store/state/app.state';
 
-import { ChangeToDoItemCompletedStatus, DeleteToDoItem } from '../store/actions/to-do-items.action';
-
-import { toDoItemActionTypes } from './../to-do-item-action.enum';
+import { changeToDoItemCompletedStatus, deleteToDoItem } from '../store/actions/to-do-items.action';
 
 import { ToDoItem } from '../to-do-item.type';
 
@@ -17,15 +15,13 @@ import { ToDoItem } from '../to-do-item.type';
 export class ToDoItemComponent {
   @Input() toDoItem: ToDoItem;
 
-  readonly toDoItemActionTypes = toDoItemActionTypes;
-
   constructor(private readonly store: Store<AppState>) {}
 
   deleteToDoItem(): void {
-    this.store.dispatch(DeleteToDoItem(this.toDoItem))
+    this.store.dispatch(deleteToDoItem({ id: this.toDoItem.id }));
   }
 
   changeToDoItemCompletedStatus(): void {
-    this.store.dispatch(ChangeToDoItemCompletedStatus(this.toDoItem))
+    this.store.dispatch(changeToDoItemCompletedStatus({ id: this.toDoItem.id }));
   }
 }

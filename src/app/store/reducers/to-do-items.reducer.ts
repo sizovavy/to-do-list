@@ -1,39 +1,54 @@
 import { createReducer, on } from '@ngrx/store';
 
-import { toDoItemActions } from 'src/app/to-do-item-actions';
-import { toDoItemsActions } from 'src/app/to-do-items-actions';
 import { 
-    ChangeToDoItemCompletedStatus, 
-    ClearCompletedToDoItems, 
-    CreateToDoItem, 
-    DeleteToDoItem, 
-    SwitchActiveToDoItemsToCompleted 
+    changeToDoItemCompletedStatus, 
+    clearCompletedToDoItems, 
+    createToDoItem, 
+    deleteToDoItem, 
+    switchActiveToDoItemsToCompleted 
 } from '../actions/to-do-items.action';
 
+import { ToDoItemsState } from './../state/to-do-items.state';
 import { initialToDoItemsState } from '../state/to-do-items.state';
 
-import { toDoItemActionTypes } from 'src/app/to-do-item-action.enum';
-import { toDoItemsActionTypes } from 'src/app/to-do-items-action.enum';
+import { ToDoItem } from './../../to-do-item.type';
+
+const createToDoItemReducer = ({ toDoItems }: ToDoItemsState, toDoItem: ToDoItem): ToDoItemsState => ({ 
+    toDoItems: [...toDoItems, toDoItem]
+});
+
+const clearCompletedToDoItemsReducer = ({ toDoItems }: ToDoItemsState): ToDoItemsState => ({    
+    toDoItems: toDoItems.filter(({ isCompleted }: ToDoItem) => !isCompleted )
+});
+
+const switchActiveToDoItemsToCompletedReducer = ({ toDoItems }: ToDoItemsState): ToDoItemsState => {
+    const hasActiveToDoItems = toDoItems.some(({ isCompleted }: ToDoItem) => !isCompleted);
+
+    return {
+        toDoItems: toDoItems.map((toDoItem: ToDoItem) => ({ 
+            ...toDoItem, 
+            isCompleted: hasActiveToDoItems,
+        }))
+    }
+};
+
+const deleteToDoItemReducer = ({ toDoItems }: ToDoItemsState, { id: toDoItemIdForDeleting }): ToDoItemsState => ({
+    toDoItems: toDoItems.filter(({ id }: ToDoItem) => id !== toDoItemIdForDeleting)
+});
+    
+
+const ChangeToDoItemCompletedStatusReducer = ({ toDoItems }: ToDoItemsState, { id: toDoItemIdForUpdating }): ToDoItemsState => ({
+    toDoItems: toDoItems.map((toDoItem: ToDoItem) => ({
+        ...toDoItem, 
+        isCompleted: toDoItem.id === toDoItemIdForUpdating ? !toDoItem.isCompleted : toDoItem.isCompleted,
+    }))
+});
 
 export const toDoItemsReducer = createReducer(
     initialToDoItemsState,
-    on(CreateToDoItem, (state, toDoItem) => ({ 
-        toDoItems: toDoItemActions[toDoItemActionTypes.create](state.toDoItems, toDoItem)
-    })),
-
-    on(DeleteToDoItem, (state, toDoItem) => ({ 
-        toDoItems: toDoItemActions[toDoItemActionTypes.delete](state.toDoItems, toDoItem)
-    })),
-
-    on(ChangeToDoItemCompletedStatus, (state, toDoItem) => ({ 
-        toDoItems: toDoItemActions[toDoItemActionTypes.selectionToggle](state.toDoItems, toDoItem)
-    })),
-
-    on(SwitchActiveToDoItemsToCompleted, (state) => ({ 
-        toDoItems: toDoItemsActions[toDoItemsActionTypes.switchActiveToDoItemsToCompleted](state.toDoItems)
-    })),
-
-    on(ClearCompletedToDoItems, (state) => ({ 
-        toDoItems: toDoItemsActions[toDoItemsActionTypes.clearCompletedToDoItems](state.toDoItems)
-    })),
+    on(createToDoItem, createToDoItemReducer),
+    on(deleteToDoItem, deleteToDoItemReducer),
+    on(changeToDoItemCompletedStatus, ChangeToDoItemCompletedStatusReducer),
+    on(switchActiveToDoItemsToCompleted, switchActiveToDoItemsToCompletedReducer),
+    on(clearCompletedToDoItems, clearCompletedToDoItemsReducer),
 );

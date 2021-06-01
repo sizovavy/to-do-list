@@ -1,25 +1,25 @@
 import { createAction, props } from '@ngrx/store';
 import { ToDoItem } from '../../to-do-item.type';
 
-export const CreateToDoItem = createAction(
+export const createToDoItem = createAction(
     '[ToDoItems] Create ToDoItem',
     props<ToDoItem>()
 );
 
-export const DeleteToDoItem = createAction(
+export const deleteToDoItem = createAction(
     '[ToDoItems] Delete ToDoItem',
-    props<ToDoItem>()
+    props<{ id: number }>()
 );
 
-export const ChangeToDoItemCompletedStatus = createAction(
+export const changeToDoItemCompletedStatus = createAction(
     '[ToDoItems] Change ToDoItem Completed Status',
-    props<ToDoItem>()
+    props<{ id: number }>()
 );
 
-export const SwitchActiveToDoItemsToCompleted = createAction(
+export const switchActiveToDoItemsToCompleted = createAction(
     '[ToDoItems] Switch Active ToDoItems To Completed',
 );
 
-export const ClearCompletedToDoItems = createAction(
+export const clearCompletedToDoItems = createAction(
     '[ToDoItems] Clear Completed ToDoItems',
 );

@@ -7,7 +7,7 @@ import { initialFormControlInputValue } from '../constants';
 
 import { AppState } from '../store/state/app.state';
 
-import { CreateToDoItem, SwitchActiveToDoItemsToCompleted } from '../store/actions/to-do-items.action';
+import { createToDoItem, switchActiveToDoItemsToCompleted } from '../store/actions/to-do-items.action';
 
 @Component({
   selector: 'to-do-header',
@@ -19,7 +19,7 @@ export class HeaderComponent {
   createToDoItemControl = new FormControl(initialFormControlInputValue);
 
   createToDoItem(value: string): void {
-    this.store.dispatch(CreateToDoItem({
+    this.store.dispatch(createToDoItem({
           value,
           id: Date.now(),      
           isCompleted: false,
@@ -29,6 +29,6 @@ export class HeaderComponent {
   }
 
   switchActiveToDoItemsToCompleted(): void {
-    this.store.dispatch(SwitchActiveToDoItemsToCompleted());
+    this.store.dispatch(switchActiveToDoItemsToCompleted());
   }
 }

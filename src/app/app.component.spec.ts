@@ -4,7 +4,7 @@ describe('MyFeatureComponent', () => {
   let component: AppComponent;
 
   beforeEach(() => {
-    component = new AppComponent()
+    component = new AppComponent();
   });
 
   it('should create', () => {
