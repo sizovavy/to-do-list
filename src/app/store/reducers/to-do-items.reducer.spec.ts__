@@ -4,7 +4,7 @@ import { initialToDoItemsState } from '../state/to-do-items.state';
 import { toDoItemsReducer } from './to-do-items.reducer';
 
 describe('ToDoItemReducer', () => {
-    it('should return the default state', () => {
+    it('should create initial state if state not provided', () => {
         const action = {
             type: "unknown"
         };
@@ -13,36 +13,40 @@ describe('ToDoItemReducer', () => {
         expect(state).toBe(initialToDoItemsState);
     });
 
-    const state = {
+    const mockState: any = {
         toDoItems: [
-                        {
+            {
                 id: 1,
-                value: "test1",
                 isCompleted: true
             },
             {
                 id: 2,
-                value: "test2",
-                isCompleted: true
-            },
-            {
-                id: 3,
-                value: "test3",
                 isCompleted: false
             }
         ],
     }
 
+    it('should not change state if action is unknown', () => {
+        const action = {
+            type: "unknown"
+        };
+        const state = toDoItemsReducer(initialToDoItemsState, action);
+
+        expect(state).toBe(initialToDoItemsState);
+    });
+
     describe('[ToDoItems] Switch Active ToDoItems To Completed action ', () => {
-        const action = switchActiveToDoItemsToCompleted();
+        const action = switchActiveToDoItemsToCompleted();        
 
         it('should change state if state is not empty', () => {
+            const state = { toDoItems: [...mockState.toDoItems] };
             const newState = toDoItemsReducer(state, action);
 
             expect(newState).not.toEqual(state);
         });
 
         it('should not change state if state is empty', () => {
+            const state = { toDoItems: [...mockState.toDoItems] };
             const newState = toDoItemsReducer(initialToDoItemsState, action);
 
             expect(newState).toEqual(initialToDoItemsState);
